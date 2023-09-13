@@ -6,6 +6,11 @@ radio.onReceivedNumber(function (receivedNumber) {
             if (grupp == 115) {
                 signalStrength2 = radio.receivedPacket(RadioPacketProperty.SignalStrength)
                 xMax = receivedNumber
+            } else {
+                if (grupp == 116) {
+                    signalStrength3 = radio.receivedPacket(RadioPacketProperty.SignalStrength)
+                    ymax = receivedNumber
+                }
             }
         }
         received = 1
@@ -35,6 +40,8 @@ let xRadar = 0
 let yRadar = 0
 let x = 0
 let y = 0
+let ymax = 0
+let signalStrength3 = 0
 let signalStrength2 = 0
 let signalStrength1 = 0
 let calibrate = 0
@@ -47,19 +54,19 @@ grupp = 114
 received = 0
 visa = 0
 xMax = 2
-calibrate = 45
+calibrate = 25
 basic.forever(function () {
     if (received == 1) {
         grupp += 1
-        if (grupp == 116) {
+        if (grupp == 117) {
             grupp = 114
         }
         radio.setGroup(grupp)
         received = 0
         y = ((0 - signalStrength2 - calibrate) ** 2 + (0 - xMax - calibrate) ** 2 - (0 - signalStrength1 - calibrate) ** 2) / (2 * (0 - xMax - calibrate))
-        x = Math.sqrt((0 - signalStrength2 - calibrate) ** 2 - y ** 2)
+        x = ((0 - signalStrength2 - calibrate) ** 2 + (0 - xMax - calibrate) ** 2 - (0 - signalStrength3 - calibrate) ** 2) / (2 * (0 - xMax - calibrate))
         yRadar = Math.round(5 * y / (0 - xMax - calibrate))
-        xRadar = Math.round(5 * x / (0 - xMax - calibrate))
+        xRadar = Math.round(10 * x / (0 - xMax - calibrate))
         if (xRadar > 4) {
             xFinal = 4
         } else {
